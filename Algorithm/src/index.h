@@ -2,7 +2,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML>
   <html>
     <style>
-    body {
+    body {       
   	background-image: url('https://imgur.com/K0lYq7I.jpg');
 	}
     

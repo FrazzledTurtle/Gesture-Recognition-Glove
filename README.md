@@ -1,6 +1,6 @@
 # Gesture Recognition Glove
 
-*A short intro before starting the article. To anyone who will find themselves reading through this project, please know that, being written around 2020-2021, the algorithm is most likely out-of-date, from the libraries to the dev board used. I've kept everything untouched since then, just as some sort of comparison for myself a long time ago. Hope it helps!*
+*A short intro before starting the article. To anyone who will find themselves reading through this project, please know that, being written around 2020-2021, the algorithm is most likely out-of-date, from the libraries to the dev board used. This is a certain version of what I have written and I've kept everything untouched since then, just as some sort of comparison for myself a long time ago. The algorithm is poorly written and hardware concepts are basic. Hope it helps anyone who's trying to get into embedded systems!*
 
 ***The whole prototype will require 5 flex sensors, a development board, an accelerometer,
 gyroscope, and a battery shield.*** During the making of this prototype, a wearable glove will be created

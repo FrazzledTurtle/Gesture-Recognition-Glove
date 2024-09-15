@@ -1,6 +1,4 @@
-/************************************************************************/
-/*                          Libraries                                   */
-/************************************************************************/
+// Libraries
 #include <Arduino.h>
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
@@ -8,54 +6,33 @@
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <index.h>
-/************************************************************************/
-/*                          Variables                                   */
-/************************************************************************/
-// Create a Asynchronous Web Server object on port 80
+
+// Expose port 80
 WebServer server(80);
+
 // Network Credentials 
 const char *ssid = "Wi-Fi name";
 const char *password = "Wi-Fi pass";
 
+// Global Variables
 #define LED 2
+#define Flex_Sensor1 34
+#define Flex_Sensor2 35
+#define Flex_Sensor3 33
+#define Flex_Sensor4 32
+#define Flex_Sensor5 39
 
-// Variables
-const int Flex_Sensor1 = 34;
-const int Flex_Sensor2 = 35;
-const int Flex_Sensor3 = 33;
-const int Flex_Sensor4 = 32;
-const int Flex_Sensor5 = 39;
+// Local Variables
 const float VCC = 3.3;
 const float R_Divider = 10000.0;
-
-float R_Straight1 = 12300.0;
-float R_Bend1 = 29000.0;
-float R_Straight2 = 12300.0;
-float R_Bend2 = 29000.0;
-float R_Straight3 = 12300.0;
-float R_Bend3 = 29000.0;
-float R_Straight4 = 12300.0;
-float R_Bend4 = 29000.0;
-float R_Straight5 = 12300.0;
-float R_Bend5 = 29000.0;
-
-float flexV1 = 0.0;
-float flexR1 = 0.0;
-float flexV2 = 0.0;
-float flexR2 = 0.0;
-float flexV3 = 0.0;
-float flexR3 = 0.0;
-float flexV4 = 0.0;
-float flexR4 = 0.0;
-float flexV5 = 0.0;
-float flexR5 = 0.0;
-
+float R_Straight1, R_Straight2, R_Straight3, R_Straight4, R_Straight5 = 12300.0;
+float R_Bend1, R_Bend2, R_Bend3, R_Bend4, R_Bend5 = 29000.0;
+float flexV1, flexV2, flexV3, flexV4, flexV5, flexR1, flexR2, flexR3, flexR4, flexR5 = 0.0;
 String storeReadings = "";
 String OldstoreReadings = "0";
 
 // Accelerometer and Gyroscope Variables
-unsigned long lastTime = 0;
-unsigned long lastTimeAcc = 0;
+unsigned long lastTime, lastTimeAcc = 0;
 unsigned long gyroDelay = 10;
 unsigned long temperatureDelay = 1000;
 unsigned long accelerometerDelay = 200;
@@ -70,25 +47,20 @@ sensors_event_t a, g, temp;
 float gyroXerror = 0.09;
 float gyroYerror = 0.04;
 float gyroZerror = 0.02;
-/************************************************************************/
-/*                        Initialization of MPU                         */
-/************************************************************************/
+
+// Initialization of module
 void initMPU()
 {
   if (!mpu.begin())
   {
     Serial.println("Failed to find the MPU6050 chip.");
-    while (1) 
-    {
-      delay(10);
-    }
+    delay(10);
   }
   Serial.println("MPU6050 was found!");
   Serial.println("\n");
 }
-/************************************************************************/
-/*                       Initialization of WiFi                         */
-/************************************************************************/
+
+// Connection to local network.
 void initWiFi()
 {
   WiFi.mode(WIFI_STA);
@@ -103,17 +75,15 @@ void initWiFi()
   Serial.println("\n");
   Serial.println(WiFi.localIP());
 }
-/************************************************************************/
-/*     This routing is executed when you open its IP in browser         */
-/************************************************************************/
+
+// This routing is executed when you open its IP in browser
 void handleRoot()
 {
   String s = index_html; // Read HTML contents
   server.send(200, "text/html", s); // Sends the Web Page
 }
-/************************************************************************/
-/*                   Calibrating the flex sensors                       */
-/************************************************************************/
+
+// Calibrating the flex sensors
 void Calibration()
 {
   Serial.println("Starting Calibration.\n");
@@ -124,7 +94,6 @@ void Calibration()
     float Flex_Value3 = analogRead(Flex_Sensor3);
     float Flex_Value4 = analogRead(Flex_Sensor4);
     float Flex_Value5 = analogRead(Flex_Sensor5);
-    
     if (Flex_Value1<R_Straight1)
     {
       R_Straight1=Flex_Value1;
@@ -133,7 +102,6 @@ void Calibration()
     {
       R_Bend1=Flex_Value1;
     }
-
     if (Flex_Value2<R_Straight2)
     {
       R_Straight2=Flex_Value2;
@@ -142,7 +110,6 @@ void Calibration()
     {
       R_Bend2=Flex_Value2;
     }
-
      if (Flex_Value3<R_Straight3)
     {
       R_Straight3=Flex_Value3;
@@ -151,7 +118,6 @@ void Calibration()
     {
       R_Bend3=Flex_Value3;
     }
-
      if (Flex_Value4<R_Straight4)
     {
       R_Straight4=Flex_Value4;
@@ -160,7 +126,6 @@ void Calibration()
     {
       R_Bend4=Flex_Value4;
     }
-
     if (Flex_Value5<R_Straight5)
     {
       R_Straight5=Flex_Value5;
@@ -173,9 +138,8 @@ void Calibration()
   Serial.println("Calibration was successful.\n");
   delay(400);
 }
-/************************************************************************/
-/*                   Gathering data of Gyroscope                        */
-/************************************************************************/
+
+// Gathering data of Gyroscope
 void getGyroReadings()
 {
   mpu.getEvent(&a, &g, &temp);
@@ -196,15 +160,8 @@ void getGyroReadings()
   {
     gyroZ += gyroZ_temp/90.00;
   }
-  // For debugging purposes
-  // Serial.println(gyroX); 
-  // Serial.println(gyroY); 
-  // Serial.println(gyroZ); 
-  // delay(500);
 }
-/************************************************************************/
-/*                 Gathering data of Accelerometer                      */
-/************************************************************************/
+// Gathering data of Accelerometer
 void getAccReadings()
 {
   mpu.getEvent(&a, &g, &temp);
@@ -213,51 +170,29 @@ void getAccReadings()
   accX = a.acceleration.x;
   accY = a.acceleration.y;
   accZ = a.acceleration.z;
-
-  // For debugging purposes
-  // Serial.println(accX); 
-  // Serial.println(accY); 
-  // Serial.println(accZ); 
-  // Serial.println("\n");
-  // delay(500);
 }
-/************************************************************************/
-/*               Gathering data of Flex Resistances                     */
-/************************************************************************/
+
+// Gathering data of Flex Resistances
 void getFlexReadings()
-{
+{ 
   float Flex_Value1 = analogRead(Flex_Sensor1);
   float Flex_Value2 = analogRead(Flex_Sensor2);
   float Flex_Value3 = analogRead(Flex_Sensor3);
   float Flex_Value4 = analogRead(Flex_Sensor4);
   float Flex_Value5 = analogRead(Flex_Sensor5);
-
   flexV1 = Flex_Value1 * VCC / 4095.0;
   flexR1 = R_Divider * (VCC / flexV1 - 1.0);
-
   flexV2 = Flex_Value2 * VCC / 4095.0;
   flexR2 = R_Divider * (VCC / flexV2 - 1.0);
-
   flexV3 = Flex_Value3 * VCC / 4095.0;
   flexR3 = R_Divider * (VCC / flexV3 - 1.0);
-
   flexV4 = Flex_Value4 * VCC / 4095.0;
   flexR4 = R_Divider * (VCC / flexV4 - 1.0);
-
   flexV5 = Flex_Value5 * VCC / 4095.0;
   flexR5 = R_Divider * (VCC / flexV5 - 1.0);
-
-  //  Serial.println(flexR1); 
-  //  Serial.println(flexR2); 
-  //  Serial.println(flexR3); 
-  //  Serial.println(flexR4); 
-  //  Serial.println(flexR5); 
-  //  Serial.println("\n");
-  //  delay(500);
 }
-/************************************************************************/
-/*       Fixing the multiple printing of the same gestures              */
-/************************************************************************/
+
+// Fixing multiple printing of the same gestures
 boolean printGestureReadings()
 {
   if (!OldstoreReadings.equals(storeReadings))
@@ -267,9 +202,7 @@ boolean printGestureReadings()
   }
   return false;
 }
-/************************************************************************/
-/*                              Datasets                                */
-/************************************************************************/
+// Poor man's datasets
 void getGestureReadings()
 {
   if (flexR1>=3000 && flexR1<=8500 && flexR2>=3000 && flexR2<=8500 && flexR3>=3000 && flexR3<=8500 && flexR4>=3000 && flexR4<=8500 && flexR5>=3000 && flexR5<=8500)
@@ -311,9 +244,7 @@ void getGestureReadings()
   // Sends the value only to client ajax request
   server.send(200, "text/plane", storeReadings); 
 }
-/************************************************************************/
-/*                              Setup                                   */
-/************************************************************************/
+// After boot
 void setup() 
 {
   Serial.begin(115200);
@@ -329,9 +260,8 @@ void setup()
   Serial.println("HTTP server started!\n");
   digitalWrite(LED, HIGH);
 }
-/************************************************************************/
-/*                              Loop                                    */
-/************************************************************************/
+
+// Main Loop
 void loop() 
 {
   getGyroReadings();
@@ -341,4 +271,3 @@ void loop()
   server.handleClient();
   delay(500);
 }
-/************************************************************************/

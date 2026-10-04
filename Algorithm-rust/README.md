@@ -1,7 +1,8 @@
 # Gesture Recognition Glove — Rust rewrite (no_std)
 
-A `no_std`, bare-metal port of `../Algorithm` (Arduino/PlatformIO, C++) to
-Rust, targeting the same ESP32 DOIT DevKit V1 board. Built on `esp-hal`
+A `no_std`, bare-metal port of the original Arduino/PlatformIO (C++) firmware
+— preserved in the [v0.1 release](https://github.com/FrazzledTurtle/Gesture-Recognition-Glove/releases/tag/v0.1),
+no longer in the current tree — to Rust, targeting the same ESP32 DOIT DevKit V1 board. Built on `esp-hal`
 (Espressif's bare-metal HAL) + `esp-radio`/`esp-rtos` for Wi-Fi + `embassy`
 for the async runtime and TCP/IP stack — not `esp-idf`, so there's no C
 toolchain or ESP-IDF install involved, only the Espressif Rust/LLVM fork.

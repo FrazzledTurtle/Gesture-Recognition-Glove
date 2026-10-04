@@ -27,7 +27,3 @@ twice a second.
   build write-up are preserved in the
   [v0.1 release](https://github.com/FrazzledTurtle/Gesture-Recognition-Glove/releases/tag/v0.1)
   and no longer kept in the current tree.
-
-## License
-
-See [`LICENSE`](LICENSE).

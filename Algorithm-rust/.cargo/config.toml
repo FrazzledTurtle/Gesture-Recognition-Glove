@@ -1,0 +1,19 @@
+[build]
+target = "xtensa-esp32-none-elf"
+
+[target.xtensa-esp32-none-elf]
+runner = "espflash flash --monitor"
+linker = "xtensa-esp32-elf-gcc"
+rustflags = [
+  "-C", "link-arg=-Wl,-Tlinkall.x",
+  "-C", "link-arg=-nostartfiles",
+]
+
+[env]
+ESP_LOG = "info"
+# Edit these before flashing.
+SSID = "Wi-Fi name"
+PASSWORD = "Wi-Fi pass"
+
+[unstable]
+build-std = ["alloc", "core"]
